@@ -34,6 +34,6 @@ public class Usuario {
     private Persona persona;
 
     @Column(nullable = false)
-    private boolean activo;
+    private Boolean activo;
 
 }

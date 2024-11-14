@@ -53,9 +53,10 @@ public class UsuarioServicio {
                 .id(usuario.getId())
                 .correo(usuario.getCorreo())
                 .username(usuario.getUsername())
+                .password("********")
                 .rol(usuario.getRol())
                 .personaId(usuario.getPersona().getId())
-                .activo(usuario.isActivo())
+                .activo(usuario.getActivo())
                 .build();
     }
 

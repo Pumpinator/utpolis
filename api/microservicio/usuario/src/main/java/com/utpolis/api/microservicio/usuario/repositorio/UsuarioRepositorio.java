@@ -12,4 +12,7 @@ public interface UsuarioRepositorio extends CrudRepository<Usuario, Long>, Pagin
 
     Optional<Usuario> findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByCorreo(String correo);
 }

@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-@EnableDiscoveryClient
+@EnableDiscoveryClient(autoRegister = false)
 @EntityScan(basePackages = {"com.utpolis.modelo.entidad"})
 public class MicroservicioUsuario {
 

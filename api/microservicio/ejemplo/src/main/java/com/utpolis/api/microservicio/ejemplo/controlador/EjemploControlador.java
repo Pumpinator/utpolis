@@ -24,7 +24,7 @@ public class EjemploControlador { // Controlador de prueba para subir archivos y
     private final UsuarioServicio usuarioServicio; // Servicio para obtener información del usuario
     private static final Logger logger = LoggerFactory.getLogger(EjemploControlador.class.getName());
 
-    @GetMapping("/probar") // Método para obtener información del usuario
+    @GetMapping("/yo") // Método para obtener información del usuario ingresado
     public ResponseEntity<?> test(@RequestHeader Map<String, String> headers) throws JsonProcessingException {
         String username = usuarioServicio.obtenerSujeto(headers.get("authorization"));
         UsuarioDto usuario = usuarioServicio.obtener(username);
@@ -34,10 +34,10 @@ public class EjemploControlador { // Controlador de prueba para subir archivos y
         headers.put("rol", usuario.getRol());
         headers.put("id", usuario.getId().toString());
 
-        String datos = new ObjectMapper().writeValueAsString(headers);
+        String res = new ObjectMapper().writeValueAsString(headers);
 
-        logger.info(datos);
-        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(datos);
+        logger.info(res);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(res);
     }
 
     @PostMapping("/subir") // Método para subir archivos

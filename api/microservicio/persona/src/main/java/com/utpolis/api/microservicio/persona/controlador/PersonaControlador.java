@@ -2,6 +2,7 @@ package com.utpolis.api.microservicio.persona.controlador;
 
 import com.utpolis.api.microservicio.persona.repositorio.PersonaRepositorio;
 import com.utpolis.api.microservicio.persona.servicio.PersonaServicio;
+import com.utpolis.modelo.dto.PersonaDto;
 import com.utpolis.modelo.entidad.Persona;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

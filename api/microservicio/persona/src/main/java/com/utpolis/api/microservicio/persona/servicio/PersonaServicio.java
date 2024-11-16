@@ -15,7 +15,7 @@ public class PersonaServicio {
 
     private PersonaRepositorio personaRepositorio;
 
-    public PersonaDto crear(Persona persona){
+    public PersonaDto crear(PersonaDto persona){
         try {
             return construirDto(personaRepositorio.save(Persona.builder()
                     .id(persona.getId())
@@ -40,6 +40,7 @@ public class PersonaServicio {
     public PersonaDto modificar(Persona persona){
         try {
             obtener(persona.getId());
+
             return construirDto(personaRepositorio.save(persona));
         } catch (Exception e) {
             throw new RuntimeException(e);

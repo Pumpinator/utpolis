@@ -15,6 +15,5 @@ public class PersonaDto {
     private String apellidos;
     private String telefono;
     private String fechaNacimiento;
-    private Long direccionId;
 
 }

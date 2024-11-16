@@ -3,6 +3,9 @@ package com.utpolis.modelo.entidad;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Collection;
+import java.util.List;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -29,4 +32,6 @@ public class Sala {
     @Column(nullable = false)
     private boolean estatus;
 
+    @OneToMany(mappedBy = "sala", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Asiento> asientos;
 }

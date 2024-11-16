@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.Collection;
 
 @Entity
 @Builder
@@ -13,21 +12,22 @@ import java.util.Collection;
 @Getter
 @Setter
 @ToString
-public class Venta {
+public class Cupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "venta_id")
+    @Column(name = "cupon_id")
     private Long id;
 
     @Column(nullable = false)
-    private Instant fecha;
+    private String codigo;
 
     @Column(nullable = false)
-    private String estatus;
+    private double descuento;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
-    private Usuario usuario;
+    @Column(nullable = false)
+    private Instant fechaInicio;
 
+    @Column(nullable = false)
+    private Instant fechaFin;
 }

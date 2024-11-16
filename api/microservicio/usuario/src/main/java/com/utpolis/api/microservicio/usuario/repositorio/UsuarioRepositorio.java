@@ -15,4 +15,6 @@ public interface UsuarioRepositorio extends CrudRepository<Usuario, Long>, Pagin
     boolean existsByUsername(String username);
 
     boolean existsByCorreo(String correo);
+
+    Iterable<Usuario> findAllByRol(String rol);
 }

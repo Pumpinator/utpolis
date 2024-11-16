@@ -4,6 +4,7 @@ import com.utpolis.modelo.dto.UsuarioDto;
 import com.utpolis.modelo.entidad.Usuario;
 import com.utpolis.api.microservicio.usuario.repositorio.PersonaRepositorio;
 import com.utpolis.api.microservicio.usuario.repositorio.UsuarioRepositorio;
+import com.utpolis.modelo.util.Roles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,10 @@ public class UsuarioServicio {
                                 new RuntimeException(String.format("Usuario con id \'%d\' no encontrado", id))
                         )
         );
+    }
+
+    public Iterable<UsuarioDto> obtener(Roles rol) { // Obtener usuario por rol
+        return ((List<Usuario>) usuarioRepositorio.findAllByRol(rol.name())).stream().map(this::construirDto).toList();
     }
 
     public UsuarioDto crear(UsuarioDto usuario) { // Crear usuario
@@ -93,7 +98,7 @@ public class UsuarioServicio {
         return usuarioRepositorio.findAll(pageable).map(this::construirDto);
     }
 
-    private UsuarioDto construirDto(Usuario usuario) {
+    public UsuarioDto construirDto(Usuario usuario) {
         return UsuarioDto.builder()
                 .id(usuario.getId())
                 .correo(usuario.getCorreo())
@@ -139,8 +144,8 @@ public class UsuarioServicio {
         if (usuario.getUsername() != null && usuarioRepositorio.existsByUsername(usuario.getUsername()))
             throw new RuntimeException(String.format("Username \'%s\' ya existe", usuario.getUsername()));
 
-        if (usuario.getRol() != null && !(usuario.getRol().equals("ADMINISTRADOR") || usuario.getRol().equals("EMPLEADO")))
-            throw new RuntimeException("Rol inválido");
+        if (usuario.getRol() != null && !(usuario.getRol().equals(Roles.ADMINISTRADOR.name()) || usuario.getRol().equals(Roles.EMPLEADO.name()) || usuario.getRol().equals(Roles.CLIENTE.name())))
+            throw new RuntimeException(String.format("Rol \'%s\' inválido"));
     }
 
     private boolean esNuevo(UsuarioDto usuario) {
@@ -148,7 +153,7 @@ public class UsuarioServicio {
     }
 
     private boolean esAdmin(String username) {
-        return usuarioRepositorio.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Usuario \'%s\' no encontrado", username))).getRol().equals("ADMIN");
+        return usuarioRepositorio.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Usuario \'%s\' no encontrado", username))).getRol().equals(Roles.ADMINISTRADOR.name());
     }
 
 }

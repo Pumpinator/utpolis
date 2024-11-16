@@ -2,7 +2,6 @@ package com.utpolis.modelo.entidad;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalTime;
 
 @Entity
 @Builder
@@ -11,14 +10,20 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @ToString
-public class Horario {
+public class Asiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "horario_id")
+    @Column(name = "asiento_id")
     private Long id;
 
     @Column(nullable = false)
-    private LocalTime hora;
+    private String numero;
 
+    @Column(nullable = false)
+    private boolean ocupado;
+
+    @ManyToOne
+    @JoinColumn(name = "sala_id", nullable = false)
+    private Sala sala;
 }

@@ -26,8 +26,4 @@ public class Proveedor {
     @Column(nullable = false)
     private String telefono;
 
-    @ManyToOne
-    @JoinColumn(name = "direccion_id", referencedColumnName = "direccion_id")
-    private Direccion direccion;
-
 }

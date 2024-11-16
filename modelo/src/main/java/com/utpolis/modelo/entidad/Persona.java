@@ -28,9 +28,4 @@ public class Persona {
 
     @Column(nullable = false)
     private String fechaNacimiento;
-
-    @ManyToOne
-    @JoinColumn(name = "direccion_id", referencedColumnName = "direccion_id")
-    private Direccion direccion;
-
 }

@@ -3,8 +3,6 @@ package com.utpolis.modelo.entidad;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-
 @Entity
 @Builder
 @NoArgsConstructor
@@ -20,20 +18,14 @@ public class Boleto {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "funcion_id", nullable = false)
+    private Funcion funcion;
 
     @ManyToOne
-    @JoinColumn(name = "horario_id", nullable = false)
-    private Horario horario;
-
-    @Column(nullable = false)
-    private String asiento;
+    @JoinColumn(name = "asiento_id", nullable = false)
+    private Asiento asiento;
 
     @Column(nullable = false)
     private double precio;
-
-    @Column(nullable = false)
-    private Instant fechaCompra;
 
 }

@@ -4,9 +4,11 @@ import com.utpolis.api.microservicio.usuario.repositorio.PersonaRepositorio;
 import com.utpolis.api.microservicio.usuario.repositorio.UsuarioRepositorio;
 import com.utpolis.modelo.entidad.Persona;
 import com.utpolis.modelo.entidad.Usuario;
+import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +18,12 @@ public class DataComponente {
 
     private final UsuarioRepositorio usuarioRepositorio;
     private final PersonaRepositorio personaRepositorio;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @EventListener
     public void crearDatos(ApplicationReadyEvent event) {
-        Persona persona = crearPersona(Persona.builder()
+        Persona alejandro = crearPersona(Persona.builder()
                 .nombres("Alejandro")
                 .apellidos("Delgado Cardona")
                 .telefono("4772285062")
@@ -28,12 +31,29 @@ public class DataComponente {
                 .build()
         );
 
+        Persona brandon =  crearPersona(Persona.builder()
+                .nombres("Brandon")
+                .apellidos("Montoya Ortiz")
+                .telefono("4776994512")
+                .fechaNacimiento("2001-03-09")
+                .build()
+        );
+
         crearUsuario(Usuario.builder()
                 .correo("alejandro@gmail.com")
                 .username("alejandro")
-                .password("alejandro")
+                .password(passwordEncoder.encode("alejandro"))
                 .rol("ADMIN")
-                .persona(persona)
+                .persona(alejandro)
+                .activo(true)
+                .build());
+
+        crearUsuario(Usuario.builder()
+                .correo("brandon@gmail.com")
+                .username("brandon")
+                .password(passwordEncoder.encode("brandon"))
+                .rol("CLIENTE")
+                .persona(brandon)
                 .activo(true)
                 .build());
     }

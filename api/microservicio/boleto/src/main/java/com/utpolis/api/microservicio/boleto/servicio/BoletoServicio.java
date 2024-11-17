@@ -25,7 +25,6 @@ public class BoletoServicio {
         return construirDto(boletoRepositorio.findById(id).get());
     }
 
-
     public BoletoDto crear(@RequestBody BoletoDto boleto){
             return construirDto(boletoRepositorio.save(Boleto.builder()
                     .id(boleto.getId())

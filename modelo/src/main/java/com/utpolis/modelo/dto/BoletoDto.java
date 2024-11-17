@@ -18,5 +18,4 @@ public class BoletoDto {
     private Asiento asiento_id;
     private Funcion funcion_id;
     private double precio;
-
 }

@@ -1,5 +1,7 @@
 package com.utpolis.modelo.dto;
 
+import com.utpolis.modelo.entidad.Asiento;
+import com.utpolis.modelo.entidad.Funcion;
 import lombok.*;
 
 import java.time.Instant;
@@ -13,10 +15,8 @@ import java.time.Instant;
 public class BoletoDto {
 
     private Long id;
-    private Long usuarioId;
-    private Long horarioId;
-    private String asiento;
+    private Asiento asiento_id;
+    private Funcion funcion_id;
     private double precio;
-    private Instant fechaCompra;
 
 }

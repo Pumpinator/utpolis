@@ -13,9 +13,11 @@ import java.util.List;
 public class VentaDto {
 
     private Long id;
-    private Long usuarioId;
+    private Long empleadoId;
+    private Long clienteId;
     private String fecha;
-    private String estatus;
-    private List<BoletoDto> boletos;
+    private boolean estatus;
+    private double total;
+    private List<DetalleVentaDto> detalleVenta;
 
 }

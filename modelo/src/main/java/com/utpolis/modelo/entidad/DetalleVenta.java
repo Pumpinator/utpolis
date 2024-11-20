@@ -13,51 +13,26 @@ import lombok.*;
 @ToString
 public class DetalleVenta {
 
-    @EmbeddedId
-    private DetalleVentaId detalleVentaId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("venta")
     @JoinColumn(name = "venta_id", referencedColumnName = "venta_id", nullable = false)
     private Venta venta;
 
     @ManyToOne
-    @MapsId("producto")
     @JoinColumn(name = "producto_id", referencedColumnName = "producto_id")
     private Producto producto;
 
     @ManyToOne
-    @MapsId("boleto")
-    @JoinColumn(name = "boleto_id", referencedColumnName = "boleto_id")
-    private Boleto boleto;
+    @JoinColumn(name = "funcion_id", referencedColumnName = "funcion_id")
+    private Funcion funcion;
 
     @Column(nullable = false)
     private int cantidad;
 
     @Column(nullable = false)
     private float subtotalDetalle;
-
-    @Embeddable
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Setter
-    @ToString
-    public static class DetalleVentaId {
-
-        @ManyToOne
-        @JoinColumn(name = "venta_id", referencedColumnName = "venta_id")
-        private Venta venta;
-
-        @ManyToOne
-        @JoinColumn(name = "producto_id", referencedColumnName = "producto_id")
-        private Producto producto;
-
-        @ManyToOne
-        @JoinColumn(name = "boleto_id", referencedColumnName = "boleto_id")
-        private Boleto boleto;
-
-    }
 
 }

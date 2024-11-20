@@ -22,6 +22,9 @@ public class Funcion {
     private Long id;
 
     @Column(nullable = false)
+    private float precio;
+
+    @Column(nullable = false)
     private LocalDate fecha;
 
     @ManyToOne

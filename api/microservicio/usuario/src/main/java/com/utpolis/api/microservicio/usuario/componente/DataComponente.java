@@ -3,6 +3,7 @@ package com.utpolis.api.microservicio.usuario.componente;
 import com.utpolis.api.microservicio.usuario.repositorio.PersonaRepositorio;
 import com.utpolis.api.microservicio.usuario.repositorio.UsuarioRepositorio;
 import com.utpolis.modelo.entidad.Persona;
+import com.utpolis.modelo.entidad.Roles;
 import com.utpolis.modelo.entidad.Usuario;
 import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +40,19 @@ public class DataComponente {
                 .build()
         );
 
+        Persona vayron = crearPersona(Persona.builder()
+                .nombres("Vayron")
+                .apellidos("Granado Conchas")
+                .telefono("4778734578")
+                .fechaNacimiento("2003-01-01")
+                .build()
+        );
+
         crearUsuario(Usuario.builder()
                 .correo("alejandro@gmail.com")
                 .username("alejandro")
                 .password(passwordEncoder.encode("alejandro"))
-                .rol("ADMIN")
+                .rol(Roles.ADMINISTRADOR.name())
                 .persona(alejandro)
                 .activo(true)
                 .build());
@@ -52,8 +61,17 @@ public class DataComponente {
                 .correo("brandon@gmail.com")
                 .username("brandon")
                 .password(passwordEncoder.encode("brandon"))
-                .rol("CLIENTE")
+                .rol(Roles.EMPLEADO.name())
                 .persona(brandon)
+                .activo(true)
+                .build());
+
+        crearUsuario(Usuario.builder()
+                .correo("vayron@gmail.com")
+                .username("vayron")
+                .password(passwordEncoder.encode("vayron"))
+                .rol(Roles.CLIENTE.name())
+                .persona(vayron)
                 .activo(true)
                 .build());
     }

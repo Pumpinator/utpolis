@@ -3,7 +3,7 @@ package com.utpolis.api.microservicio.usuario.servicio;
 import com.utpolis.modelo.dto.PaginaDto;
 import com.utpolis.modelo.dto.UsuarioDto;
 import com.utpolis.modelo.entidad.Usuario;
-import com.utpolis.modelo.util.Roles; // Updated import statement
+import com.utpolis.modelo.entidad.Roles; // Updated import statement
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

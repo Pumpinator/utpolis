@@ -24,10 +24,14 @@ public class Venta {
     private Instant fecha;
 
     @Column(nullable = false)
-    private String estatus;
+    private boolean estatus;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
-    private Usuario usuario;
+    @JoinColumn(name = "empleado_id", referencedColumnName = "usuario_id")
+    private Usuario empleado;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "usuario_id")
+    private Usuario cliente;
 
 }

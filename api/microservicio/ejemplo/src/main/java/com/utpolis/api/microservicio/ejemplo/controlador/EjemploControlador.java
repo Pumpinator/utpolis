@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,5 +51,12 @@ public class EjemploControlador { // Controlador de prueba para subir archivos y
             logger.error(e.getMessage());
             return ResponseEntity.status(400).body(new HashMap<>(Map.of("error", e.getMessage())));
         }
+    }
+
+    private String obtenerRol(Collection<? extends GrantedAuthority> authorities) {
+        String rol = authorities.stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("No se encontró el rol del usuario")
+        ).getAuthority().replace("ROLE_", "").replace("[", "").replace("]", "");
+        return rol.charAt(0) + rol.substring(1).toLowerCase();
     }
 }

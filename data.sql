@@ -24,7 +24,7 @@ VALUES ('El Origen', 'Un ladrón que roba secretos corporativos mediante el uso 
         'el_padrino.jpg', 'Inglés');
 
 INSERT INTO utpolis.sala (capacidad, numero, tipo, estatus)
-VALUES (100, 1, 'Estándar', true);
+VALUES (50, 1, 'Estándar', true);
 
 INSERT INTO utpolis.asiento (numero, ocupado, sala_id)
 VALUES ('A1', false, 1),
@@ -104,8 +104,57 @@ VALUES ('2024-11-14', 1, 1, 1, 80),
 
 INSERT INTO utpolis.categoria (nombre)
 VALUES ('Alimentos'),
-       ('Bebidas');
+       ('Bebidas'),
+       ('Dulces'),
+       ('Snacks'),
+       ('Postres'),
+       ('Saludables'),
+       ('Gourmet');
 
 INSERT INTO utpolis.producto (estatus, existencia, nombre_producto, precio, tamanio, unidad, categoria_id)
-VALUES (true, 50, 'Palomitas Grandes', 130, 'Grande', 'gr', 1);
+VALUES
+    (true, 100, 'Palomitas Medianas', 100, 'Mediana', 'gr', 1),
+    (true, 150, 'Palomitas Pequeñas', 70, 'Pequeña', 'gr', 1),
+    (true, 200, 'Refresco Grande', 60, 'Grande', 'ml', 2),
+    (true, 250, 'Refresco Mediano', 50, 'Mediano', 'ml', 2),
+    (true, 300, 'Refresco Pequeño', 40, 'Pequeño', 'ml', 2),
+    (true, 100, 'Nachos con Queso', 90, 'Grande', 'gr', 1),
+    (true, 120, 'Hot Dog', 80, 'Unidad', 'unidad', 1),
+    (true, 80, 'Chocolate', 50, 'Barra', 'gr', 3),
+    (true, 60, 'Gomitas', 40, 'Paquete', 'gr', 3),
+    (true, 70, 'Caramelos', 30, 'Paquete', 'gr', 3),
+    (true, 90, 'Chips de Vegetales', 70, 'Paquete', 'gr', 5),
+    (true, 100, 'Fruta Deshidratada', 60, 'Paquete', 'gr', 5),
+    (true, 110, 'Yogurt Congelado', 80, 'Tarrina', 'ml', 6),
+    (true, 120, 'Helado', 90, 'Tarrina', 'ml', 6),
+    (true, 130, 'Palomitas Gourmet', 150, 'Grande', 'gr', 7),
+    (true, 140, 'Queso Fundido con Nachos', 160, 'Grande', 'gr', 7);
+
+INSERT INTO utpolis.proveedor (correo, nombre_proveedor, telefono)
+VALUES
+    ('clientes@costco.com', 'Costco Wholesale', '800-774-2678'),
+    ('ventas@cinepolis.com', 'Cinépolis', '800-123-4567'),
+    ('contacto@cinemex.com', 'Cinemex', '800-234-5678'),
+    ('info@palomitasdeluxe.com', 'Palomitas Deluxe', '800-345-6789'),
+    ('soporte@bebidaspremium.com', 'Bebidas Premium', '800-456-7890'),
+    ('ventas@snacksandmore.com', 'Snacks & More', '800-567-8901');
+
+INSERT INTO utpolis.inventario (cantidad, fecha, tipo_movimiento, producto_id, proveedor_id)
+VALUES
+    (100, '2024-11-01', 'Entrada', 1, 1),
+    (150, '2024-11-01', 'Entrada', 2, 1),
+    (200, '2024-11-01', 'Entrada', 3, 2),
+    (250, '2024-11-01', 'Entrada', 4, 2),
+    (300, '2024-11-01', 'Entrada', 5, 2),
+    (100, '2024-11-01', 'Entrada', 6, 3),
+    (120, '2024-11-01', 'Entrada', 7, 3),
+    (80, '2024-11-01', 'Entrada', 8, 4),
+    (60, '2024-11-01', 'Entrada', 9, 4),
+    (70, '2024-11-01', 'Entrada', 10, 4),
+    (90, '2024-11-01', 'Entrada', 11, 5),
+    (100, '2024-11-01', 'Entrada', 12, 5),
+    (110, '2024-11-01', 'Entrada', 13, 6),
+    (120, '2024-11-01', 'Entrada', 14, 6),
+    (130, '2024-11-01', 'Entrada', 15, 4),
+    (140, '2024-11-01', 'Entrada', 16, 4);
 

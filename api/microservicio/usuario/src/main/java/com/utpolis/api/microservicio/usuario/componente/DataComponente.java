@@ -1,8 +1,10 @@
 package com.utpolis.api.microservicio.usuario.componente;
 
 import com.utpolis.api.microservicio.usuario.repositorio.PersonaRepositorio;
+import com.utpolis.api.microservicio.usuario.repositorio.RolRepositorio;
 import com.utpolis.api.microservicio.usuario.repositorio.UsuarioRepositorio;
 import com.utpolis.modelo.entidad.Persona;
+import com.utpolis.modelo.entidad.Rol;
 import com.utpolis.modelo.entidad.Roles;
 import com.utpolis.modelo.entidad.Usuario;
 import io.jsonwebtoken.security.Password;
@@ -20,10 +22,15 @@ public class DataComponente {
     private final UsuarioRepositorio usuarioRepositorio;
     private final PersonaRepositorio personaRepositorio;
     private final PasswordEncoder passwordEncoder;
+    private final RolRepositorio rolRepositorio;
 
     @Transactional
     @EventListener
     public void crearDatos(ApplicationReadyEvent event) {
+        Rol administrador = crearRol(Roles.ADMINISTRADOR.name());
+        Rol empleado = crearRol(Roles.EMPLEADO.name());
+        Rol cliente = crearRol(Roles.CLIENTE.name());
+
         Persona alejandro = crearPersona(Persona.builder()
                 .nombres("Alejandro")
                 .apellidos("Delgado Cardona")
@@ -31,7 +38,6 @@ public class DataComponente {
                 .fechaNacimiento("2003-04-23")
                 .build()
         );
-
         Persona brandon =  crearPersona(Persona.builder()
                 .nombres("Brandon")
                 .apellidos("Montoya Ortiz")
@@ -39,7 +45,6 @@ public class DataComponente {
                 .fechaNacimiento("2001-03-09")
                 .build()
         );
-
         Persona vayron = crearPersona(Persona.builder()
                 .nombres("Vayron")
                 .apellidos("Granado Conchas")
@@ -52,28 +57,36 @@ public class DataComponente {
                 .correo("alejandro@gmail.com")
                 .username("alejandro")
                 .password(passwordEncoder.encode("alejandro"))
-                .rol(Roles.ADMINISTRADOR.name())
+                .rol(administrador)
                 .persona(alejandro)
                 .activo(true)
-                .build());
-
+                .build()
+        );
         crearUsuario(Usuario.builder()
                 .correo("brandon@gmail.com")
                 .username("brandon")
                 .password(passwordEncoder.encode("brandon"))
-                .rol(Roles.EMPLEADO.name())
+                .rol(empleado)
                 .persona(brandon)
                 .activo(true)
-                .build());
-
+                .build()
+        );
         crearUsuario(Usuario.builder()
                 .correo("vayron@gmail.com")
                 .username("vayron")
                 .password(passwordEncoder.encode("vayron"))
-                .rol(Roles.CLIENTE.name())
+                .rol(cliente)
                 .persona(vayron)
                 .activo(true)
-                .build());
+                .build()
+        );
+    }
+
+    private Rol crearRol(String nombre) {
+        Rol bdRol = rolRepositorio.findByNombre(nombre).orElse(null);
+        if (bdRol == null)
+            bdRol = rolRepositorio.save(Rol.builder().nombre(nombre).build());
+        return bdRol;
     }
 
     public Persona crearPersona(Persona persona) {

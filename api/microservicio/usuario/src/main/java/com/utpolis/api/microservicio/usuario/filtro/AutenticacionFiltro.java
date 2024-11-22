@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -58,11 +59,11 @@ public class AutenticacionFiltro extends UsernamePasswordAuthenticationFilter { 
     }
 
     @Override // Método para autenticación exitosa
-    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        UsuarioDetallesImpl userDetails = (UsuarioDetallesImpl) authResult.getPrincipal(); // Obtener detalles del usuario
+    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication auth) throws IOException, ServletException {
+        UsuarioDetallesImpl userDetails = (UsuarioDetallesImpl) auth.getPrincipal(); // Obtener detalles del usuario
 
         String token = Jwts.builder()
-                .claim("scope", authResult.getAuthorities())
+                .claim("scope", auth.getAuthorities())
                 .subject(userDetails.getUsername())
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plusMillis(expiration)))
@@ -72,7 +73,7 @@ public class AutenticacionFiltro extends UsernamePasswordAuthenticationFilter { 
         Map<String, String> datos = new HashMap<>(Map.of(
                 "id", String.valueOf(userDetails.getUsuario().getId()),
                 "username", userDetails.getUsername(),
-                "rol", userDetails.getAuthorities().toString().replace("[", "").replace("]", ""),
+                "rol", obtenerRol(auth.getAuthorities()),
                 "expira", (expiration / 60) + " minutos",
                 "token", token
         )); // Datos del token en un mapa
@@ -80,6 +81,13 @@ public class AutenticacionFiltro extends UsernamePasswordAuthenticationFilter { 
         res.setStatus(HttpServletResponse.SC_OK); // Código de estado
         res.setContentType(MediaType.APPLICATION_JSON_VALUE); // Tipo de contenido
         res.getOutputStream().println(new ObjectMapper().writeValueAsString(datos)); // Convertir a JSON los datos
+    }
+
+    private String obtenerRol(Collection<? extends GrantedAuthority> authorities) {
+        String rol = authorities.stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("No se encontró el rol del usuario")
+        ).getAuthority().replace("ROLE_", "").replace("[", "").replace("]", "");
+        return rol.charAt(0) + rol.substring(1).toLowerCase();
     }
 
     @Override // Método para autenticación fallida

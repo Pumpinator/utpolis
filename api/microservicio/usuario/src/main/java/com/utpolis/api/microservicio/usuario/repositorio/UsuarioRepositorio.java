@@ -1,6 +1,8 @@
 package com.utpolis.api.microservicio.usuario.repositorio;
 
 import com.utpolis.modelo.entidad.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +18,8 @@ public interface UsuarioRepositorio extends CrudRepository<Usuario, Long>, Pagin
 
     boolean existsByCorreo(String correo);
 
-    Iterable<Usuario> findAllByRol(String rol);
+    Iterable<Usuario> findAllByRolNombre(String rol);
+
+    Page<Usuario> findAllByRolNombre(String rol, Pageable pageable);
+
 }

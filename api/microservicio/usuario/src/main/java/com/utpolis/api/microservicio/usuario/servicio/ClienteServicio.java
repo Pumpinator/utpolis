@@ -2,7 +2,7 @@ package com.utpolis.api.microservicio.usuario.servicio;
 
 import com.utpolis.modelo.dto.PaginaDto;
 import com.utpolis.modelo.dto.UsuarioDto;
-import com.utpolis.modelo.entidad.Roles;
+import com.utpolis.modelo.entidad.Roles; // Updated import statement
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,26 +18,6 @@ public class ClienteServicio {
 
     private final UsuarioServicio usuarioServicio;
 
-    private List<UsuarioDto> construirDto(List<UsuarioDto> usuarios) {
-        return usuarios.stream()
-                .filter(usuario -> usuario.getRol().equals(Roles.CLIENTE.name()))
-                .collect(Collectors.toList());
-    }
-
-    private UsuarioDto convertirDto(UsuarioDto usuario) {
-        if (!usuario.getRol().equals(Roles.CLIENTE.name()))
-            throw new RuntimeException(String.format("Usuario con id %s no es un '%s'", usuario.getId(), Roles.CLIENTE.name()));
-        return UsuarioDto.builder()
-                .id(usuario.getId())
-                .correo(usuario.getCorreo())
-                .username(usuario.getUsername())
-                .password("********")
-                .rol(usuario.getRol())
-                .personaId(usuario.getPersonaId())
-                .activo(usuario.getActivo())
-                .build();
-    }
-
     public UsuarioDto obtener(Long id) {
         return convertirDto(usuarioServicio.obtener(id));
     }
@@ -46,8 +26,8 @@ public class ClienteServicio {
         return convertirDto(usuarioServicio.obtener(username));
     }
 
-    public Iterable<UsuarioDto> obtener() {
-        Roles cliente = Roles.EMPLEADO;
+    public Iterable<UsuarioDto> listar() {
+        Roles cliente = Roles.CLIENTE;
         return StreamSupport.stream(usuarioServicio.obtener(cliente).spliterator(), false)
                 .map(this::convertirDto)
                 .toList();
@@ -73,8 +53,28 @@ public class ClienteServicio {
     public UsuarioDto modificar(UsuarioDto usuario) {
         return convertirDto(usuarioServicio.modificar(usuario));
     }
+
     public UsuarioDto eliminar(Long id) {
         return convertirDto(usuarioServicio.eliminar(id));
     }
 
+    private List<UsuarioDto> construirDto(List<UsuarioDto> usuarios) {
+        return usuarios.stream()
+                .filter(usuario -> usuario.getRol().equals(Roles.CLIENTE.name()))
+                .collect(Collectors.toList());
+    }
+
+    private UsuarioDto convertirDto(UsuarioDto usuario) {
+        if (!usuario.getRol().equals(Roles.CLIENTE.name()))
+            throw new RuntimeException(String.format("Usuario con id %s no es un '%s'", usuario.getId(), Roles.CLIENTE.name()));
+        return UsuarioDto.builder()
+                .id(usuario.getId())
+                .correo(usuario.getCorreo())
+                .username(usuario.getUsername())
+                .password("********")
+                .rol(usuario.getRol())
+                .personaId(usuario.getPersonaId())
+                .activo(usuario.getActivo())
+                .build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.utpolis.api.microservicio.usuario.servicio;
 
+import com.utpolis.api.microservicio.usuario.repositorio.RolRepositorio;
 import com.utpolis.modelo.dto.UsuarioDto;
 import com.utpolis.modelo.entidad.Roles;
 import com.utpolis.modelo.entidad.Usuario;
@@ -22,6 +23,7 @@ public class UsuarioServicio {
     private final UsuarioRepositorio usuarioRepositorio;
     private final PersonaRepositorio personaRepositorio;
     private final PasswordEncoder passwordEncoder;
+    private final RolRepositorio rolRepositorio;
 
     public UsuarioDto obtener(String username) { // Obtener usuario por username
         return construirDto( // Construir DTO de usuario
@@ -42,7 +44,7 @@ public class UsuarioServicio {
     }
 
     public Iterable<UsuarioDto> obtener(Roles rol) { // Obtener usuario por rol
-        return ((List<Usuario>) usuarioRepositorio.findAllByRol(rol.name())).stream().map(this::construirDto).toList();
+        return ((List<Usuario>) usuarioRepositorio.findAllByRolNombre(rol.name())).stream().map(this::construirDto).toList();
     }
 
     public UsuarioDto crear(UsuarioDto usuario) { // Crear usuario
@@ -52,7 +54,7 @@ public class UsuarioServicio {
                         .correo(usuario.getCorreo())
                         .username(usuario.getUsername())
                         .password(passwordEncoder.encode(usuario.getPassword()))
-                        .rol(usuario.getRol())
+                        .rol(rolRepositorio.findByNombre(usuario.getRol()).orElseThrow(() -> new RuntimeException(String.format("Rol \'%s\' no encontrado", usuario.getRol()))))
                         .persona(personaRepositorio.findById(usuario.getPersonaId()).orElseThrow(() -> new RuntimeException(String.format("Persona con id \'%d\' no encontrada", usuario.getPersonaId()))))
                         .activo(usuario.getActivo())
                         .build()) // Construir usuario con Builder [2] https://refactoring.guru/design-patterns/builder
@@ -76,7 +78,7 @@ public class UsuarioServicio {
             bdUsuario.setUsername(usuario.getUsername());
 
         if (usuario.getRol() != null)
-            bdUsuario.setRol(usuario.getRol());
+            bdUsuario.setRol(rolRepositorio.findByNombre(usuario.getRol()).orElseThrow(() -> new RuntimeException(String.format("Rol \'%s\' no encontrado", usuario.getRol()))));
 
         return construirDto(usuarioRepositorio.save(bdUsuario));
     }
@@ -104,7 +106,7 @@ public class UsuarioServicio {
                 .correo(usuario.getCorreo())
                 .username(usuario.getUsername())
                 .password("********")
-                .rol(usuario.getRol())
+                .rol(usuario.getRol().getNombre())
                 .personaId(usuario.getPersona().getId())
                 .activo(usuario.getActivo())
                 .build();
@@ -150,10 +152,6 @@ public class UsuarioServicio {
 
     private boolean esNuevo(UsuarioDto usuario) {
         return isNull(usuario.getId());
-    }
-
-    private boolean esAdmin(String username) {
-        return usuarioRepositorio.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Usuario \'%s\' no encontrado", username))).getRol().equals(Roles.ADMINISTRADOR.name());
     }
 
 }

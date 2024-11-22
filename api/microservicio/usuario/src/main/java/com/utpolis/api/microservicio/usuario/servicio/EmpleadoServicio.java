@@ -2,7 +2,6 @@ package com.utpolis.api.microservicio.usuario.servicio;
 
 import com.utpolis.modelo.dto.PaginaDto;
 import com.utpolis.modelo.dto.UsuarioDto;
-import com.utpolis.modelo.entidad.Usuario;
 import com.utpolis.modelo.entidad.Roles; // Updated import statement
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,7 @@ public class EmpleadoServicio {
         return convertirDto(usuarioServicio.obtener(username));
     }
 
-    public Iterable<UsuarioDto> obtener() { // Obtener usuario por rol
+    public Iterable<UsuarioDto> listar() { // Obtener usuario por rol
         Roles empleado = Roles.EMPLEADO;
         return StreamSupport.stream(usuarioServicio.obtener(empleado).spliterator(), false)
                 .map(this::convertirDto)

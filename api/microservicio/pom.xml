@@ -24,7 +24,6 @@
     <modules>
         <module>usuario</module>
         <module>persona</module>
-        <module>direccion</module>
         <module>boleto</module>
         <module>ejemplo</module>
     </modules>

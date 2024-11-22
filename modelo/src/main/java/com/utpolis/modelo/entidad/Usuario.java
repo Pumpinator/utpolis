@@ -26,8 +26,13 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String rol;
+    @ManyToOne
+    @JoinTable(
+            name = "usuario_rol",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id")
+    )
+    private Rol rol;
 
     @OneToOne
     @JoinColumn(name = "persona_id", referencedColumnName = "persona_id")

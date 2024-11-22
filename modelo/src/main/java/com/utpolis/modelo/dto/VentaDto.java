@@ -1,9 +1,11 @@
 package com.utpolis.modelo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,6 @@ public class VentaDto {
     private Long empleadoId;
     private Long clienteId;
     private String fecha;
-    private boolean estatus;
     private double total;
     private List<DetalleVentaDto> detalleVenta;
 

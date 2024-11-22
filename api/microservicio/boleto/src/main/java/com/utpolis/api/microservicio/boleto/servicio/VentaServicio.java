@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,16 +25,18 @@ public class VentaServicio {
     private final VentaRepositorio ventaRepositorio;
     private final DetalleVentaRepositorio detalleVentaRepositorio;
     private final BoletoRepositorio boletoRepositorio;
-
+    private final InventarioRepositorio inventarioRepositorio;
 
     @Transactional
     public VentaDto generar(VentaDto venta) {
         validar(venta);
 
         Usuario cliente = usuarioRepositorio.findById(venta.getClienteId()).orElseThrow(() -> new RuntimeException(String.format("Cliente con id '%s' no encontrado", venta.getClienteId())));
-        if (!cliente.getRol().equals(Roles.CLIENTE.name())) throw new RuntimeException("El usuario no es un cliente");
+        if (!cliente.getRol().getNombre().equals(Roles.CLIENTE.name()))
+            throw new RuntimeException("El usuario no es un cliente");
         Usuario empleado = usuarioRepositorio.findById(venta.getEmpleadoId()).orElseThrow(() -> new RuntimeException(String.format("Empleado con id '%s' no encontrado", venta.getEmpleadoId())));
-        if (!empleado.getRol().equals(Roles.EMPLEADO.name())) throw new RuntimeException("El usuario no es un empleado");
+        if (!empleado.getRol().getNombre().equals(Roles.EMPLEADO.name()))
+            throw new RuntimeException("El usuario no es un empleado");
         Instant fecha = Instant.now();
 
         Venta nueva = ventaRepositorio.save(Venta.builder()
@@ -42,46 +45,53 @@ public class VentaServicio {
                 .fecha(fecha)
                 .build());
 
+        List<Long> asientosId = new ArrayList<>();
         List<DetalleVentaDto> detallesDto = venta.getDetalleVenta();
         List<DetalleVenta> detalles = detallesDto.stream().map(detalleVenta -> {
             validar(detalleVenta);
             if (detalleVenta.getFuncionId() != null) {
-                if (venta.getDetalleVenta().size() != detalleVenta.getAsientosId().size())
+                if (detalleVenta.getCantidad() != detalleVenta.getAsientosId().size())
                     throw new RuntimeException("La cantidad de asientos no coincide con la cantidad de detalles");
+
                 Funcion funcion = funcionRepositorio.findById(detalleVenta.getFuncionId()).orElseThrow(() -> new RuntimeException(String.format("Funcion con id '%s' no encontrada", detalleVenta.getFuncionId())));
                 if (funcion.getFecha().isBefore(LocalDate.now())) throw new RuntimeException("La función ya ha pasado");
+
                 detalleVenta.getAsientosId().forEach(asientoId -> {
                     Asiento asiento = asientoRepositorio.findById(asientoId).orElseThrow(() -> new RuntimeException(String.format("Asiento con id '%s' no encontrado", asientoId)));
+                    if (!asiento.getSala().getId().equals(funcion.getSala().getId()))
+                        throw new RuntimeException(String.format("El asiento '%s' no pertenece a la sala '%s' de la función '%s'", asiento.getId(), funcion.getSala().getId(), funcion.getId()));
                     if (asiento.isOcupado())
                         throw new RuntimeException(String.format("El asiento '%s' ya está ocupado", asiento.getId()));
                     asiento.setOcupado(true);
-                    asientoRepositorio.save(asiento);
 
-                    Boleto boleto = boletoRepositorio.save(Boleto.builder()
+                    asientoRepositorio.save(asiento);
+                    boletoRepositorio.save(Boleto.builder()
                             .funcion(funcion)
                             .asiento(asiento)
                             .precio(funcion.getPrecio())
                             .build());
+                    asientosId.add(asiento.getId());
                 });
-                return DetalleVenta.builder()
-                        .venta(nueva)
-                        .funcion(funcion)
-                        .cantidad(detalleVenta.getCantidad())
-                        .subtotalDetalle(funcion.getPrecio() * detalleVenta.getCantidad())
-                        .build();
+                detalleVenta.setVentaId(nueva.getId());
+                detalleVenta.setFuncionId(funcion.getId());
+                detalleVenta.setSubtotalDetalle(funcion.getPrecio() * detalleVenta.getCantidad());
             } else {
                 Producto producto = productoRepositorio.findById(detalleVenta.getProductoId()).orElseThrow(() -> new RuntimeException(String.format("Producto con id '%s' no encontrado", detalleVenta.getProductoId())));
-                return DetalleVenta.builder()
-                        .venta(nueva)
-                        .producto(producto)
-                        .cantidad(detalleVenta.getCantidad())
-                        .subtotalDetalle(producto.getPrecio() * detalleVenta.getCantidad())
-                        .build();
+                Inventario inventario = inventarioRepositorio.findByProductoId(detalleVenta.getProductoId()).orElseThrow(() -> new RuntimeException(String.format("Producto con id '%s' no encontrado en el inventario", detalleVenta.getProductoId())));
+                if (inventario.getCantidad() < detalleVenta.getCantidad())
+                    throw new RuntimeException(String.format("No hay suficientes productos '%s' en el inventario", producto.getNombreProducto()));
+                inventario.setCantidad(inventario.getCantidad() - detalleVenta.getCantidad());
+                inventarioRepositorio.save(inventario);
+                detalleVenta.setProductoId(producto.getId());
+                detalleVenta.setSubtotalDetalle(producto.getPrecio() * detalleVenta.getCantidad());
+                detalleVenta.setVentaId(nueva.getId());
+                detalleVenta.setProductoId(producto.getId());
             }
+            return construir(detalleVenta);
         }).toList();
-        detalleVentaRepositorio.saveAll(detalles);
+        detalles = (List<DetalleVenta>) detalleVentaRepositorio.saveAll(detalles);
 
-        return construirDto(nueva, detalles);
+        return construirDto(nueva, detalles, asientosId);
     }
 
     private void validar(DetalleVentaDto detalleVenta) {
@@ -100,7 +110,7 @@ public class VentaServicio {
 
     private void validar(VentaDto venta) {
         if (venta.getClienteId() == null)
-            throw new RuntimeException("El id del usuario es requerido");
+            throw new RuntimeException("El id del cliente es requerido");
 
         if (venta.getEmpleadoId() == null)
             throw new RuntimeException("El id del empleado es requerido");
@@ -113,26 +123,35 @@ public class VentaServicio {
 
     }
 
-    public VentaDto construirDto(Venta venta, List<DetalleVenta> detalles) {
+    public VentaDto construirDto(Venta venta, List<DetalleVenta> detalles, List<Long> asientosId) {
         double total = detalles.stream().mapToDouble(DetalleVenta::getSubtotalDetalle).sum();
         return VentaDto.builder()
                 .id(venta.getId())
                 .clienteId(venta.getCliente().getId())
                 .empleadoId(venta.getEmpleado().getId())
                 .fecha(venta.getFecha().toString())
-                .estatus(venta.isEstatus())
-                .detalleVenta(detalles.stream().map(this::construirDto).toList())
+                .detalleVenta(detalles.stream().map((detalleVenta) -> DetalleVentaDto.builder()
+                        .id(detalleVenta.getId())
+                        .ventaId(detalleVenta.getVenta().getId())
+                        .productoId(detalleVenta.getProducto() != null ? detalleVenta.getProducto().getId() : null)
+                        .funcionId(detalleVenta.getFuncion() != null ? detalleVenta.getFuncion().getId() : null)
+                        .asientosId(detalleVenta.getFuncion() != null ? asientosId : null)
+                        .cantidad(detalleVenta.getCantidad())
+                        .subtotalDetalle(detalleVenta.getSubtotalDetalle())
+                        .build()).toList())
                 .total(total)
                 .build();
     }
 
-    public DetalleVentaDto construirDto(DetalleVenta detalle) {
-        return DetalleVentaDto.builder()
-                .ventaId(detalle.getVenta().getId())
-                .productoId(detalle.getProducto() != null ? detalle.getProducto().getId() : null)
-                .funcionId(detalle.getFuncion() != null ? detalle.getFuncion().getId() : null)
-                .cantidad(detalle.getCantidad())
-                .subtotalDetalle(detalle.getSubtotalDetalle())
+
+    public DetalleVenta construir(DetalleVentaDto detalleVenta) {
+        return DetalleVenta.builder()
+                .id(detalleVenta.getId())
+                .venta(ventaRepositorio.findById(detalleVenta.getVentaId()).orElseThrow(() -> new RuntimeException(String.format("Venta con id '%s' no encontrada", detalleVenta.getVentaId()))))
+                .producto(detalleVenta.getProductoId() != null ? productoRepositorio.findById(detalleVenta.getProductoId()).orElseThrow(() -> new RuntimeException(String.format("Producto con id '%s' no encontrado", detalleVenta.getProductoId()))) : null)
+                .funcion(detalleVenta.getFuncionId() != null ? funcionRepositorio.findById(detalleVenta.getFuncionId()).orElseThrow(() -> new RuntimeException(String.format("Función con id '%s' no encontrada", detalleVenta.getFuncionId()))) : null)
+                .cantidad(detalleVenta.getCantidad())
+                .subtotalDetalle(detalleVenta.getSubtotalDetalle())
                 .build();
     }
 }

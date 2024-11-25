@@ -8,3 +8,11 @@ sudo docker build -t pumpinator/utpolis-usuario "$BASE_DIR"/api/microservicio/us
 sudo docker build -t pumpinator/utpolis-persona "$BASE_DIR"/api/microservicio/persona
 sudo docker build -t pumpinator/utpolis-venta "$BASE_DIR"/api/microservicio/venta
 sudo docker build -t pumpinator/utpolis-ejemplo "$BASE_DIR"/api/microservicio/ejemplo
+
+sudo docker push pumpinator/utpolis-conf
+sudo docker push pumpinator/utpolis-eureka
+sudo docker push pumpinator/utpolis-gateway
+sudo docker push pumpinator/utpolis-usuario
+sudo docker push pumpinator/utpolis-persona
+sudo docker push pumpinator/utpolis-venta
+sudo docker push pumpinator/utpolis-ejemplo

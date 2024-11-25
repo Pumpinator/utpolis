@@ -17,6 +17,7 @@
         <module>eureka</module>
         <module>microservicio</module>
         <module>filtro</module>
+        <module>conf</module>
     </modules>
 
     <properties>

@@ -24,10 +24,7 @@ public class UsuarioControlador {
     private final UsuarioServicio usuarioServicio;
     private static final Logger logger = LoggerFactory.getLogger(UsuarioControlador.class.getName());
 
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<?> crear(@RequestBody UsuarioDto usuario) {
         try {

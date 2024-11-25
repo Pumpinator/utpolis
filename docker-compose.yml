@@ -1,0 +1,134 @@
+services:
+
+  eureka:
+    container_name: utpolis-eureka
+    image: pumpinator/utpolis-eureka
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - utpolis-network
+
+  conf:
+    container_name: utpolis-conf
+    image: pumpinator/utpolis-conf
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - utpolis-network
+    depends_on:
+      - eureka
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED: "true"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/Pumpinator/utpolis-conf.git
+      SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME: Pumpinator
+      SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD: 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
+      SPRING_CLOUD_CONFIG_SERVER_GIT_CLONE_ON_START: "true"
+      SPRING_CLOUD_CONFIG_SERVER_DEFAULT-LABEL: dev
+
+  gateway:
+    container_name: utpolis-gateway
+    image: pumpinator/utpolis-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka
+      - conf
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://conf:8888/
+      MANAGEMENT_ENDPOINT_GATEWAY_ENABLED: "true"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+
+  usuario:
+    container_name: utpolis-usuario
+    image: pumpinator/utpolis-usuario
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka
+      - conf
+      - gateway
+      - bd
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://conf:8888/
+      SPRING_DATASOURCE_URL: jdbc:mysql://bd:3306/utpolis?createDatabaseIfNotExist=true
+
+  persona:
+    container_name: utpolis-persona
+    image: pumpinator/utpolis-persona
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka
+      - conf
+      - gateway
+      - bd
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://conf:8888/
+      SPRING_DATASOURCE_URL: jdbc:mysql://bd:3306/utpolis?createDatabaseIfNotExist=true
+
+  venta:
+    container_name: utpolis-venta
+    image: pumpinator/utpolis-venta
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka
+      - conf
+      - gateway
+      - bd
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://conf:8888/
+      SPRING_DATASOURCE_URL: jdbc:mysql://bd:3306/utpolis?createDatabaseIfNotExist=true
+
+  ejemplo:
+    container_name: utpolis-ejemplo
+    image: pumpinator/utpolis-ejemplo
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka
+      - conf
+      - gateway
+      - bd
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://conf:8888/
+      SPRING_DATASOURCE_URL: jdbc:mysql://bd:3306/utpolis?createDatabaseIfNotExist=true
+
+  bd:
+    container_name: utpolis-bd
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - utpolis-network
+    environment:
+        MYSQL_ROOT_PASSWORD: password
+
+
+networks:
+  utpolis-network:
+    driver: bridge

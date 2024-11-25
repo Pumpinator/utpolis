@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ public class EjemploControlador { // Controlador de prueba para subir archivos y
     private static final Logger logger = LoggerFactory.getLogger(EjemploControlador.class.getName());
 
     @GetMapping("/yo") // Método para obtener información del usuario ingresado
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'EMPLEADO', 'CLIENTE')")
     public ResponseEntity<?> test(@RequestHeader Map<String, String> headers) throws JsonProcessingException {
         String username = usuarioServicio.obtenerSujeto(headers.get("authorization"));
         UsuarioDto usuario = usuarioServicio.obtener(username);
@@ -43,6 +45,7 @@ public class EjemploControlador { // Controlador de prueba para subir archivos y
     }
 
     @PostMapping("/subir") // Método para subir archivos
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile file) {
         try {
             archivoServicio.guardar(file);

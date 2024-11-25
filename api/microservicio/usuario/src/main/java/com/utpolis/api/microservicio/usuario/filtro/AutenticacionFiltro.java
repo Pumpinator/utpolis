@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -92,7 +94,7 @@ public class AutenticacionFiltro extends UsernamePasswordAuthenticationFilter { 
 
     @Override // Método para autenticación fallida
     protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res, AuthenticationException e) throws IOException, ServletException {
-        Map<String, String> data = new HashMap<>(Map.of("error", e.getMessage())); // Datos en un mapa
+        Map<String, String> data = new HashMap<>(Map.of("error", "Credenciales incorrectas")); // Datos en un mapa
 
         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);

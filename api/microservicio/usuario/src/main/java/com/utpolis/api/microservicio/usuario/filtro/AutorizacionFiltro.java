@@ -1,5 +1,6 @@
 package com.utpolis.api.microservicio.usuario.filtro;
 
+import com.utpolis.api.filtro.JwtFiltro;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

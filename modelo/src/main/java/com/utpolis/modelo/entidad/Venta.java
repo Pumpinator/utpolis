@@ -23,9 +23,6 @@ public class Venta {
     @Column(nullable = false)
     private Instant fecha;
 
-    @Column(nullable = false)
-    private boolean estatus;
-
     @ManyToOne
     @JoinColumn(name = "empleado_id", referencedColumnName = "usuario_id")
     private Usuario empleado;

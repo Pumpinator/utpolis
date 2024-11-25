@@ -5,8 +5,11 @@ import com.utpolis.modelo.dto.UsuarioDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +25,7 @@ public class EmpleadoControlador {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioControlador.class.getName());
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<?> crear(@RequestBody UsuarioDto usuario) {
         try {
             return ResponseEntity.status(201).body(empleadoServicio.crear(usuario));
@@ -32,6 +36,7 @@ public class EmpleadoControlador {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or principal == #id")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         try {
             return ResponseEntity.status(200).body(empleadoServicio.obtener(id));
@@ -41,18 +46,27 @@ public class EmpleadoControlador {
         }
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'EMPLEADO')")
     public ResponseEntity<?> listar(@RequestParam(required = false) Integer numero, @RequestParam(required = false) Integer tamanio) {
         try {
             if (numero == null || tamanio == null) return ResponseEntity.status(200).body(empleadoServicio.listar());
-            return ResponseEntity.status(200).body(empleadoServicio.paginar(PageRequest.of(numero - 1, tamanio)));
+            Page<UsuarioDto> pagina = empleadoServicio.paginar(PageRequest.of(numero - 1, tamanio));
+            HashMap<String, Object> res = new HashMap<>(Map.of(
+                    "clientes", pagina.getContent(),
+                    "total", pagina.getTotalElements(),
+                    "pagina", pagina.getNumber() + 1,
+                    "tamanio", pagina.getSize())
+            );
+            return ResponseEntity.status(200).body(res);
         } catch (Exception e) {
-            logger.error("Error al listar usuarios", e);
+            logger.error("Error al listar clientes", e);
             return ResponseEntity.status(400).body(new HashMap<>(Map.of("error", e.getMessage())));
         }
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<?> modificar(@RequestBody UsuarioDto usuario) {
         try {
             return ResponseEntity.status(200).body(empleadoServicio.modificar(usuario));
@@ -63,6 +77,7 @@ public class EmpleadoControlador {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or principal == #id")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             return ResponseEntity.status(200).body(empleadoServicio.eliminar(id));

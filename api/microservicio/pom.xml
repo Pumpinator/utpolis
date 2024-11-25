@@ -14,7 +14,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>utpolis-api-microservicio</name>
+    <name>microservicio</name>
 
     <properties>
         <java.version>17</java.version>
@@ -24,7 +24,7 @@
     <modules>
         <module>usuario</module>
         <module>persona</module>
-        <module>boleto</module>
+        <module>venta</module>
         <module>ejemplo</module>
     </modules>
 
@@ -33,6 +33,19 @@
             <groupId>com.utpolis</groupId>
             <artifactId>modelo</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.utpolis.api</groupId>
+            <artifactId>filtro</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+            <version>4.1.3</version>
         </dependency>
 
         <dependency>

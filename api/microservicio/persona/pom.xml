@@ -8,11 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.utpolis.api.microservicio</groupId>
     <artifactId>persona</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-    <name>utpolis-api-microservicio-persona</name>
+    <name>persona</name>
 
     <properties>
         <java.version>17</java.version>

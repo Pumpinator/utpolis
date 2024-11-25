@@ -1,7 +1,7 @@
 package com.utpolis.api.microservicio.ejemplo.servicio;
 
-import com.utpolis.api.microservicio.ejemplo.filtro.JwtFiltro;
 import com.utpolis.api.microservicio.ejemplo.repositorio.UsuarioRepositorio;
+import com.utpolis.api.filtro.JwtFiltro;
 import com.utpolis.modelo.dto.UsuarioDto;
 import com.utpolis.modelo.entidad.Usuario;
 import lombok.RequiredArgsConstructor;

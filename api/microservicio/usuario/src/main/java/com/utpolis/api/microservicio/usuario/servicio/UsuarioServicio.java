@@ -61,6 +61,14 @@ public class UsuarioServicio {
         );
     }
 
+    public Iterable<UsuarioDto> listar() {
+        return ((List<Usuario>) usuarioRepositorio.findAll()).stream().map(this::construirDto).toList();
+    }
+
+    public Page<UsuarioDto> paginar(Pageable pageable) {
+        return usuarioRepositorio.findAll(pageable).map(this::construirDto);
+    }
+
     public UsuarioDto modificar(UsuarioDto usuario) {
         validar(usuario);
         Usuario bdUsuario = usuarioRepositorio.findById(usuario.getId())
@@ -92,13 +100,6 @@ public class UsuarioServicio {
         return construirDto(usuarioRepositorio.save(usuario));
     }
 
-    public Iterable<UsuarioDto> listar() {
-        return ((List<Usuario>) usuarioRepositorio.findAll()).stream().map(this::construirDto).toList();
-    }
-
-    public Page<UsuarioDto> paginar(Pageable pageable) {
-        return usuarioRepositorio.findAll(pageable).map(this::construirDto);
-    }
 
     public UsuarioDto construirDto(Usuario usuario) {
         return UsuarioDto.builder()
@@ -106,7 +107,7 @@ public class UsuarioServicio {
                 .correo(usuario.getCorreo())
                 .username(usuario.getUsername())
                 .password("********")
-                .rol(usuario.getRol().getNombre())
+                .rol(usuario.getRol().getNombre().charAt(0) + usuario.getRol().getNombre().substring(1).toLowerCase())
                 .personaId(usuario.getPersona().getId())
                 .activo(usuario.getActivo())
                 .build();

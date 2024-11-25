@@ -3,6 +3,8 @@ package com.utpolis.modelo.entidad;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Collection;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -26,4 +28,5 @@ public class Asiento {
     @ManyToOne
     @JoinColumn(name = "sala_id", nullable = false)
     private Sala sala;
+
 }

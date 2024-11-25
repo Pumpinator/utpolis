@@ -2,6 +2,8 @@ package com.utpolis.api.microservicio.usuario.filtro;
 
 import com.utpolis.api.microservicio.usuario.servicio.UsuarioDetallesServicioImpl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,7 @@ public class SeguridadFiltro {
 
     private final UsuarioDetallesServicioImpl userDetailsService; // Inyección de dependencia para el servicio de detalles de usuario
     private final PasswordEncoder passwordEncoder; // Inyección de dependencia para encriptar contraseñas
+    private final Logger logger = LoggerFactory.getLogger(SeguridadFiltro.class.getName()); // Logger para registrar eventos
 
     @Value("${jwt.secret}")
     private String JWT_SECRET; // Información sensible que se encuentra en el archivo application.properties

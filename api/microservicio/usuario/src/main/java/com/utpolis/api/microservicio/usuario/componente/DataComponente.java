@@ -7,7 +7,6 @@ import com.utpolis.modelo.entidad.Persona;
 import com.utpolis.modelo.entidad.Rol;
 import com.utpolis.modelo.entidad.Roles;
 import com.utpolis.modelo.entidad.Usuario;
-import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

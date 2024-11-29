@@ -148,7 +148,7 @@ public class UsuarioServicio {
             throw new RuntimeException(String.format("Username \'%s\' ya existe", usuario.getUsername()));
 
         if (usuario.getRol() != null && !(usuario.getRol().equals(Roles.ADMINISTRADOR.name()) || usuario.getRol().equals(Roles.EMPLEADO.name()) || usuario.getRol().equals(Roles.CLIENTE.name())))
-            throw new RuntimeException(String.format("Rol \'%s\' inválido"));
+            throw new RuntimeException(String.format("Rol \'%s\' inválido", usuario.getRol()));
     }
 
     private boolean esNuevo(UsuarioDto usuario) {

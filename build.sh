@@ -1,10 +1,8 @@
-# Define the base directory
-BASE_DIR="/Users/alejandro/Developer/utl/arquitectura de software/utpolis"
 
-sudo docker build -t pumpinator/utpolis-conf "$BASE_DIR"/api/conf
-sudo docker build -t pumpinator/utpolis-eureka "$BASE_DIR"/api/eureka
-sudo docker build -t pumpinator/utpolis-gateway "$BASE_DIR"/api/gateway
-sudo docker build -t pumpinator/utpolis-usuario "$BASE_DIR"/api/microservicio/usuario
-sudo docker build -t pumpinator/utpolis-persona "$BASE_DIR"/api/microservicio/persona
-sudo docker build -t pumpinator/utpolis-venta "$BASE_DIR"/api/microservicio/venta
-sudo docker build -t pumpinator/utpolis-ejemplo "$BASE_DIR"/api/microservicio/ejemplo
+docker build -t pumpinator/utpolis-conf "C:\Users\josue\Desktop\Microservicio\utpolis/api/conf"
+docker build -t pumpinator/utpolis-eureka "C:\Users\josue\Desktop\Microservicio\utpolis/api/eureka"
+docker build -t pumpinator/utpolis-gateway "C:\Users\josue\Desktop\Microservicio\utpolis/api/gateway"
+docker build -t pumpinator/utpolis-usuario "C:\Users\josue\Desktop\Microservicio\utpolis/api/microservicio/usuario"
+docker build -t pumpinator/utpolis-persona "C:\Users\josue\Desktop\Microservicio\utpolis/api/microservicio/persona"
+docker build -t pumpinator/utpolis-venta "C:\Users\josue\Desktop\Microservicio\utpolis/api/microservicio/venta"
+docker build -t pumpinator/utpolis-ejemplo "C:\Users\josue\Desktop\Microservicio\utpolis/api/microservicio/ejemplo"

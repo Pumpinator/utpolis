@@ -61,16 +61,19 @@ public class UsuarioServicio {
         );
     }
 
+    //Recupera los usuarios de la BD y los convierte en DTOs
     public Iterable<UsuarioDto> listar() {
         return ((List<Usuario>) usuarioRepositorio.findAll()).stream().map(this::construirDto).toList();
     }
 
+    //
     public Page<UsuarioDto> paginar(Pageable pageable) {
         return usuarioRepositorio.findAll(pageable).map(this::construirDto);
     }
 
+    //Se modifica el usuario
     public UsuarioDto modificar(UsuarioDto usuario) {
-        validar(usuario);
+        validar(usuario);//Valida al usuario y lo busca por id
         Usuario bdUsuario = usuarioRepositorio.findById(usuario.getId())
                 .orElseThrow(() ->
                         new RuntimeException(String.format("Usuario con id \'%d\' no encontrado", usuario.getId()))
@@ -91,6 +94,7 @@ public class UsuarioServicio {
         return construirDto(usuarioRepositorio.save(bdUsuario));
     }
 
+    //Se elimina de manera logica
     public UsuarioDto eliminar(Long id) {
         Usuario usuario = usuarioRepositorio.findById(id)
                 .orElseThrow(() ->

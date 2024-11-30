@@ -51,6 +51,7 @@ public class VentaServicio {
     }
 
 
+
     @Transactional
     public VentaDto generar(VentaDto venta) {
         validar(venta);
